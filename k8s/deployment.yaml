@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: conversaotemperaturak8s
+  labels:
+    app: conversaotemperaturak8s
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      app: conversaotemperaturak8s
+  template:
+    metadata:
+      labels:
+        app: conversaotemperaturak8s
+    spec:
+      containers:
+      - name: conversao
+        image: diogofiaminghi/conversao-temperatura-k8s:v1
+        ports:
+        - containerPort: 8080
+          name: http
+          protocol: TCP
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "250m"
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: conversaotemperaturak8s
+  labels:
+    app: conversaotemperaturak8s
+spec:
+  selector:
+    app: conversaotemperaturak8s
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 8080
+    name: http
+    nodePort: 30000
+  type: NodePort
